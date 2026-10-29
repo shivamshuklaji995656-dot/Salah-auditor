@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
+// Live Render Backend URL
+const API_BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) 
+  ? import.meta.env.VITE_API_URL 
+  : 'https://salah-auditor.onrender.com';
+
 // District mappings by State
 const DISTRICTS_MAP = {
   "Uttar Pradesh": ["Varanasi", "Meerut", "Kanpur Nagar", "Gorakhpur", "Prayagraj", "Agra"],
@@ -221,22 +226,22 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
-  // Fetch API data if backend is running
+  // Fetch API data from Render backend
   useEffect(() => {
-    fetch('/api/audits')
+    fetch(`${API_BASE_URL}/api/audits`)
       .then(res => res.json())
       .then(data => { if (data.data) setAudits(data.data); })
-      .catch(() => {});
+      .catch((err) => console.log('Using local fallback audits', err));
 
-    fetch('/api/sources')
+    fetch(`${API_BASE_URL}/api/sources`)
       .then(res => res.json())
       .then(data => { if (data.data) setSources(data.data); })
-      .catch(() => {});
+      .catch((err) => console.log('Using local fallback sources', err));
 
-    fetch('/api/feedback')
+    fetch(`${API_BASE_URL}/api/feedback`)
       .then(res => res.json())
       .then(data => { if (data.data) setFeedback(data.data); })
-      .catch(() => {});
+      .catch((err) => console.log('Using local fallback feedback', err));
   }, []);
 
   // Load Test Scenarios
@@ -297,7 +302,7 @@ export default function App() {
     };
 
     try {
-      const res = await fetch('/api/audits', {
+      const res = await fetch(`${API_BASE_URL}/api/audits`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -311,7 +316,7 @@ export default function App() {
         return;
       }
     } catch (err) {
-      // Fallback local evaluation
+      console.log('Backend offline or slow, running local audit engine fallback', err);
     }
 
     // Local Engine Fallback
@@ -412,7 +417,7 @@ export default function App() {
     };
 
     try {
-      await fetch('/api/feedback', {
+      await fetch(`${API_BASE_URL}/api/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newFb)
@@ -425,9 +430,24 @@ export default function App() {
   };
 
   // Admin Login
-  const handleAdminAuth = (e) => {
+  const handleAdminAuth = async (e) => {
     e.preventDefault();
     const pw = e.target.password.value.trim();
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw })
+      });
+      const data = await res.json();
+      if (res.ok && data.status === 'success') {
+        setIsAdminLoggedIn(true);
+        sessionStorage.setItem('salah_admin', 'true');
+        return;
+      }
+    } catch (err) {}
+
     if (pw === 'salah2026' || pw === 'admin123') {
       setIsAdminLoggedIn(true);
       sessionStorage.setItem('salah_admin', 'true');
