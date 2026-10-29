@@ -282,9 +282,11 @@ const server = http.createServer((req, res) => {
           aiModelName: payload.aiModelName || 'Generic Farming Chatbot',
           submittedAdvice: payload.submittedAdvice || '',
           overallVerdict: result.overall_verdict,
-          verdictHeadline: result.overall_verdict === 'CONFLICTING'
+          verdictHeadline: result.verdict_headline || (result.overall_verdict === 'CONFLICTING'
             ? 'Dangerous Agronomic & Chemical Contradiction Detected'
-            : 'Consistent with available local guidance',
+            : (result.overall_verdict === 'POTENTIAL_MISMATCH'
+                ? 'Potential Local Context Mismatch Detected'
+                : 'Consistent with available local guidance')),
           verdictSummaryEn: `Evaluated ${result.claims_evaluated.length} claim(s). Identified ${result.conflicts_count} local mismatch(es).`,
           verdictSummaryHi: `सलाह में ${result.claims_evaluated.length} दावों की जांच की गई, ${result.conflicts_count} स्थानीय विसंगतियां पाई गईं।`,
           claims: result.claims_evaluated.map(c => ({
@@ -304,16 +306,20 @@ const server = http.createServer((req, res) => {
               id: 'W-1',
               parameter: 'Agro-Climatic Match',
               severity: result.overall_verdict === 'CONFLICTING' ? 'CRITICAL' : 'WARNING',
-              title: `District Rule Applied for ${payload.district}`,
-              warningEn: `Advice was cross-referenced against ${payload.district} Package of Practices.`,
-              warningHi: `यह सलाह ${payload.district} के आधिकारिक पैकेज ऑफ प्रैक्टिसेज से जांची गई।`
+              title: `District Rule Applied for ${payload.district || 'Uttar Pradesh'}`,
+              warningEn: `Advice was cross-referenced against ${payload.district || 'State'} Package of Practices.`,
+              warningHi: `यह सलाह ${payload.district || 'क्षेत्रीय'} आधिकारिक पैकेज ऑफ प्रैक्टिसेज से जांची गई।`
             }
           ],
           sourcesChecked: [SOURCES_DATABASE[0]],
           reviewStatus: result.overall_verdict === 'CONFLICTING' ? 'DISPUTED' : 'VERIFIED',
           communityReviews: [],
-          recommendedActionEn: "Follow official ICAR recommendations and consult the designated local KVK center.",
-          recommendedActionHi: "आधिकारिक आईसीएआर दिशा-निर्देशों का पालन करें और नजदीकी केवीके केंद्र से संपर्क करें।",
+          recommendedActionEn: result.overall_verdict === 'CONFLICTING'
+            ? "Immediately discard the AI advice. Follow official ICAR-IIWBR / SAU package of practices and contact local KVK center at 1800-180-1551."
+            : "Follow official ICAR recommendations and consult the designated local KVK center.",
+          recommendedActionHi: result.overall_verdict === 'CONFLICTING'
+            ? "इस एआई सलाह को तुरंत निरस्त करें। केवल आधिकारिक पैकेज ऑफ प्रैक्टिसेज और नजदीकी केवीके की सलाह (टोल-फ्री 1800-180-1551) का पालन करें।"
+            : "आधिकारिक आईसीएआर दिशा-निर्देशों का पालन करें और नजदीकी केवीके केंद्र से संपर्क करें।",
           localContactKVK: {
             name: `Krishi Vigyan Kendra ${payload.district || 'Varanasi'} (ICAR)`,
             phone: "1800-180-1551 (Kisan Call Centre Toll-Free)",
