@@ -1,0 +1,13 @@
+{
+  "name": "salah-auditor-backend",
+  "version": "1.0.0",
+  "description": "Salah Auditor Node.js Backend API & Rule Engine - Bhoomi & Bharosa Bharat",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "keywords": ["agriculture", "ai-audit", "icar", "kvk", "data-commons"],
+  "author": "Salah Auditor Team",
+  "license": "MIT"
+}

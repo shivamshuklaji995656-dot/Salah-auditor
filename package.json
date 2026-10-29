@@ -1,0 +1,14 @@
+{
+  "name": "salah-auditor-root",
+  "version": "1.0.0",
+  "description": "Salah Auditor - Bhoomi & Bharosa Bharat | Farmers, Land and the Data Commons",
+  "private": true,
+  "scripts": {
+    "dev": "cd backend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev"
+  },
+  "keywords": ["agriculture", "ai-audit", "icar", "kvk", "bhoomi-bharosa-bharat"],
+  "author": "Salah Auditor Team",
+  "license": "MIT"
+}

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salah Auditor — Check If Farm Advice Fits the Area</title>
+  <meta name="description" content="Audit AI-generated farming recommendations against official district agricultural guidance. Bhoomi & Bharosa Bharat Track.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: {
+              50: '#f2f8f3',
+              100: '#e1efe4',
+              200: '#c5e0cb',
+              300: '#9ac9a4',
+              400: '#69ab78',
+              500: '#438e53',
+              600: '#327241',
+              700: '#285a35',
+              800: '#22482c',
+              900: '#1d3c26',
+              950: '#0d2114',
+            },
+            leaf: {
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+            },
+            earth: {
+              50: '#fbf8f5',
+              100: '#f5efe8',
+              200: '#ebdcd0',
+              300: '#d7c0ae',
+              700: '#8a5944',
+              800: '#714a3a',
+              900: '#5e3e32',
+            },
+            cream: {
+              50: '#fdfcf9',
+              100: '#faf7f0',
+              200: '#f4ede0',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #fdfbf7;
+      color: #1e293b;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      overflow-x: hidden;
+    }
+    @media print {
+      header, footer, .no-print {
+        display: none !important;
+      }
+      body {
+        background: white !important;
+      }
+    }
+
+    /* Natural Agricultural Keyframe Animations */
+    @keyframes cropSwayLeft {
+      0%, 100% { transform: rotate(-1deg) translateY(0px); }
+      50% { transform: rotate(5deg) translateY(-10px) translateX(4px); }
+    }
+
+    @keyframes cropSwayRight {
+      0%, 100% { transform: rotate(2deg) translateY(0px); }
+      50% { transform: rotate(-5deg) translateY(-12px) translateX(-5px); }
+    }
+
+    @keyframes popInCropLeft {
+      0% { transform: translateX(-100px) scale(0.7); opacity: 0; }
+      70% { transform: translateX(10px) scale(1.05); opacity: 1; }
+      100% { transform: translateX(0px) scale(1); opacity: 1; }
+    }
+
+    @keyframes popInCropRight {
+      0% { transform: translateX(100px) scale(0.7); opacity: 0; }
+      70% { transform: translateX(-10px) scale(1.05); opacity: 1; }
+      100% { transform: translateX(0px) scale(1); opacity: 1; }
+    }
+
+    @keyframes waterStream {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes waterRipple {
+      0% { transform: scale(0.6); opacity: 0.9; }
+      100% { transform: scale(2.8); opacity: 0; }
+    }
+
+    @keyframes waterDrop {
+      0% { transform: translateY(-8px) scale(0.8); opacity: 0; }
+      40% { transform: translateY(0px) scale(1.2); opacity: 1; }
+      80% { transform: translateY(12px) scale(0.9); opacity: 0.7; }
+      100% { transform: translateY(22px) scale(0.4); opacity: 0; }
+    }
+
+    @keyframes floatParticle {
+      0% { transform: translateY(0px) rotate(0deg); opacity: 0.8; }
+      50% { transform: translateY(-40px) translateX(25px) rotate(45deg); opacity: 1; }
+      100% { transform: translateY(-80px) translateX(60px) rotate(90deg); opacity: 0; }
+    }
+
+    .sway-left {
+      animation: cropSwayLeft 5s ease-in-out infinite alternate;
+      transform-origin: bottom center;
+    }
+
+    .sway-right {
+      animation: cropSwayRight 5.5s ease-in-out infinite alternate;
+      transform-origin: bottom center;
+    }
+
+    .pop-left {
+      animation: popInCropLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .pop-right {
+      animation: popInCropRight 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .water-flow-bg {
+      background: linear-gradient(90deg, #0284c7, #38bdf8, #0ea5e9, #0284c7, #38bdf8);
+      background-size: 300% 300%;
+      animation: waterStream 4s ease infinite;
+    }
+
+    .ripple-ring {
+      animation: waterRipple 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+
+    .floating-leaf {
+      animation: floatParticle 6s ease-in-out infinite;
+    }
+
+    /* Officer Audit Inspection Keyframes */
+    @keyframes officerScanMove {
+      0%, 100% { transform: translate(0px, 0px) rotate(-3deg); }
+      30% { transform: translate(25px, -18px) rotate(4deg); }
+      60% { transform: translate(15px, 20px) rotate(-6deg); }
+      85% { transform: translate(-10px, 10px) rotate(2deg); }
+    }
+
+    @keyframes scanBeamLight {
+      0%, 100% { opacity: 0.2; transform: scaleY(0.7); }
+      50% { opacity: 0.85; transform: scaleY(1.1); }
+    }
+
+    @keyframes officerBreathe {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+      70% { transform: scale(1); box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pipelineFlow {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .animate-officer-scan {
+      animation: officerScanMove 4.5s ease-in-out infinite;
+      transform-origin: center center;
+    }
+
+    .animate-scan-beam {
+      animation: scanBeamLight 2.2s ease-in-out infinite alternate;
+    }
+
+    .animate-officer-breathe {
+      animation: officerBreathe 3.5s ease-in-out infinite;
+    }
+
+    .pulse-ring-green {
+      animation: pulseRing 2.4s infinite cubic-bezier(0.45, 0, 0.55, 1);
+    }
+
+    .animate-spin-slow {
+      animation: spinSlow 20s linear infinite;
+    }
+
+    .pipeline-line {
+      background: linear-gradient(90deg, #1d3c26 0%, #22c55e 50%, #1d3c26 100%);
+      background-size: 200% 100%;
+      animation: pipelineFlow 3s linear infinite;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
